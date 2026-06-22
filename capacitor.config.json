@@ -1,0 +1,9 @@
+{
+  "appId": "com.ngapp.berita",
+  "appName": "Aplikasi Berita",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}

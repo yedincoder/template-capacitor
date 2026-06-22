@@ -1,0 +1,13 @@
+# File yang mengandung API key / konfigurasi rahasia
+www/config.js
+
+# Folder besar
+android/
+node_modules/
+.gradle/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banten88 News</title>
+    <style>
+        /* --- Reset & Base --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        .app-header {
+            background: #1a237e;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .app-header h1 { font-size: 20px; font-weight: 700; }
+        .app-header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+        /* --- Navigation --- */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tabs button {
+            background: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .nav-tabs button.active {
+            background: #1a237e;
+            color: white;
+        }
+        .nav-tabs button:active { transform: scale(0.95); }
+
+        /* --- Search --- */
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-box input:focus { border-color: #1a237e; }
+        .search-box button {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        /* --- News Card --- */
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .news-card:active { transform: scale(0.98); }
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+        .news-body { padding: 16px; }
+        .news-body h3 {
+            font-size: 16px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #1a237e;
+        }
+        .news-body .meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .news-body .meta .category {
+            background: #e8eaf6;
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: #1a237e;
+            font-weight: 600;
+        }
+        .news-body .summary {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* --- Detail View --- */
+        .detail-view {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .detail-view h2 {
+            font-size: 22px;
+            color: #1a237e;
+            margin-bottom: 12px;
+        }
+        .detail-view .meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .detail-view .content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+        .detail-view .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .back-btn {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        /* --- Status & Pagination --- */
+        .loading, .error, .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        .error { color: #d32f2f; }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding-bottom: 20px;
+        }
+        .pagination button {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination span {
+            align-self: center;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .news-card img { height: 150px; }
+            .nav-tabs button { font-size: 12px; padding: 6px 12px; }
+        }
+    </style>
+	<script src="config.js"></script>
+</head>
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="app-header">
+        <h1>📰 Banten88 News</h1>
+        <p>Portal Berita Terkini</p>
+    </div>
+
+    <!-- ==================== NAVIGASI ==================== -->
+    <div class="nav-tabs" id="navTabs">
+        <button class="active" data-type="all">📋 Semua</button>
+        <button data-type="headline">🔥 Headline</button>
+        <button data-type="pilihan">⭐ Pilihan</button>
+        <button data-type="populer">📈 Populer</button>
+        <button data-type="category" data-slug="olahraga">⚽ Olahraga</button>
+        <button data-type="category" data-slug="seputar-banten">🏛️ Banten</button>
+    </div>
+
+    <!-- ==================== SEARCH ==================== -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Cari berita...">
+        <button id="searchBtn">🔍 Cari</button>
+    </div>
+
+    <!-- ==================== KONTEN ==================== -->
+    <div id="news-container">
+        <div class="loading">⏳ Memuat berita...</div>
+    </div>
+
+    <!-- ==================== PAGINATION ==================== -->
+    <div class="pagination" id="pagination">
+        <button id="prev-page" disabled>◀ Sebelumnya</button>
+        <span id="page-info">Halaman 1</span>
+        <button id="next-page">Berikutnya ▶</button>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ==================== JAVASCRIPT ========================== -->
+    <!-- ========================================================== -->
+    <script>
+        // ================================================================
+        //  1. KONFIGURASI API
+        // ================================================================
+		const API = {
+			baseUrl: APP_CONFIG.baseUrl,
+			key: APP_CONFIG.apiKey,
+			defaultLimit: APP_CONFIG.defaultLimit,
+
+            // --- Endpoint ---
+            allNews(page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/all?key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            headline(page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/headline?key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            pilihan(page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/pilihan?key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            populer(page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/populer?key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            search(keyword, page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/search?q=${encodeURIComponent(keyword)}&key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            category(slug, page = 1, limit = this.defaultLimit) {
+                return `${this.baseUrl}/post/category/${slug}?key=${this.key}&limit=${limit}&page=${page}`;
+            },
+            detail(slug) {
+                return `${this.baseUrl}/post/read/${slug}?key=${this.key}`;
+            }
+        };
+
+        // ================================================================
+        //  2. STATE APLIKASI
+        // ================================================================
+        let currentType = 'all';      // 'all' | 'headline' | 'pilihan' | 'populer' | 'category' | 'search'
+        let currentSlug = null;       // untuk category
+        let currentKeyword = '';      // untuk search
+        let currentPage = 1;
+        let totalPages = 1;
+        let isDetailView = false;
+        let detailSlug = '';
+
+        // ================================================================
+        //  3. FUNGSI UTAMA FETCH
+        // ================================================================
+        async function fetchData() {
+            const container = document.getElementById('news-container');
+            container.innerHTML = '<div class="loading">⏳ Memuat berita...</div>';
+
+            try {
+                let url;
+                if (isDetailView && detailSlug) {
+                    url = API.detail(detailSlug);
+                    const result = await fetchJson(url);
+                    renderDetail(result.data);
+                    return;
+                }
+
+                // Tentukan URL berdasarkan tipe
+                switch (currentType) {
+                    case 'headline':   url = API.headline(currentPage); break;
+                    case 'pilihan':    url = API.pilihan(currentPage); break;
+                    case 'populer':    url = API.populer(currentPage); break;
+                    case 'category':   url = API.category(currentSlug, currentPage); break;
+                    case 'search':     url = API.search(currentKeyword, currentPage); break;
+                    default:           url = API.allNews(currentPage); break;
+                }
+
+                const result = await fetchJson(url);
+                renderNews(result.data);
+                updatePagination(result.paging);
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div class="error">❌ Gagal memuat berita<br><small>${error.message}</small></div>`;
+            }
+        }
+
+        // Helper fetch dengan error handling
+        async function fetchJson(url) {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const json = await response.json();
+            if (json.status !== 200) throw new Error(json.message || 'Gagal ambil data');
+            return json;
+        }
+
+        // ================================================================
+        //  4. RENDER LIST BERITA
+        // ================================================================
+        function renderNews(newsList) {
+            const container = document.getElementById('news-container');
+            if (!newsList || newsList.length === 0) {
+                container.innerHTML = '<div class="empty">📭 Tidak ada berita</div>';
+                return;
+            }
+
+            container.innerHTML = newsList.map(item => `
+                <div class="news-card" data-slug="${item.post_slug}" onclick="openDetail('${item.post_slug}')">
+                    ${item.post_thumbnail ?
+                        `<img src="${item.post_thumbnail}" alt="${item.post_title}" loading="lazy"
+                              onerror="this.style.display='none'">` :
+                        ''}
+                    <div class="news-body">
+                        <h3>${item.post_title || 'Judul tidak tersedia'}</h3>
+                        <div class="meta">
+                            <span>📅 ${formatDate(item.created_at)}</span>
+                            ${item.category_names ? `<span class="category">${item.category_names}</span>` : ''}
+                            <span>👁️ ${item.post_views || 0}</span>
+                        </div>
+                        <div class="summary">${stripHtml(item.post_summary || item.post_content || '')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================================================================
+        //  5. RENDER DETAIL
+        // ================================================================
+        function renderDetail(data) {
+            const container = document.getElementById('news-container');
+            if (!data) {
+                container.innerHTML = '<div class="error">❌ Data tidak ditemukan</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <button class="back-btn" onclick="closeDetail()">← Kembali</button>
+                <div class="detail-view">
+                    <h2>${data.post_title || 'Judul tidak tersedia'}</h2>
+                    <div class="meta">
+                        <span>📅 ${formatDate(data.created_at)}</span>
+                        ${data.category_names ? `<span class="category">${data.category_names}</span>` : ''}
+                        <span>👁️ ${data.post_views || 0}</span>
+                    </div>
+                    <div class="content">${data.post_content || 'Konten tidak tersedia'}</div>
+                </div>
+            `;
+            document.getElementById('pagination').style.display = 'none';
+        }
+
+        // ================================================================
+        //  6. FUNGSI BANTUAN
+        // ================================================================
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Tidak diketahui';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function stripHtml(html) {
+            if (!html) return '';
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent.substring(0, 200) + (temp.textContent.length > 200 ? '...' : '');
+        }
+
+        function updatePagination(paging) {
+            if (!paging) return;
+            totalPages = paging.total_pages || 1;
+            document.getElementById('page-info').textContent =
+                `Halaman ${paging.current_page} dari ${paging.total_pages}`;
+            document.getElementById('prev-page').disabled = paging.current_page <= 1;
+            document.getElementById('next-page').disabled = paging.current_page >= paging.total_pages;
+            document.getElementById('pagination').style.display = 'flex';
+        }
+
+        // ================================================================
+        //  7. NAVIGASI & EVENT
+        // ================================================================
+        function openDetail(slug) {
+            detailSlug = slug;
+            isDetailView = true;
+            currentPage = 1;
+            fetchData();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeDetail() {
+            isDetailView = false;
+            detailSlug = '';
+            document.getElementById('pagination').style.display = 'flex';
+            fetchData();
+        }
+
+        function switchTab(type, slug = null) {
+            currentType = type;
+            currentSlug = slug;
+            currentKeyword = '';
+            document.getElementById('searchInput').value = '';
+            isDetailView = false;
+            currentPage = 1;
+
+            // Update active tab
+            document.querySelectorAll('.nav-tabs button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.nav-tabs button').forEach(btn => {
+                if (btn.dataset.type === type && (btn.dataset.slug === slug || !slug)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            fetchData();
+        }
+
+        // Event listener untuk tab
+        document.querySelectorAll('.nav-tabs button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.dataset.type;
+                const slug = this.dataset.slug || null;
+                switchTab(type, slug);
+            });
+        });
+
+        // Event listener search
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (!keyword) return;
+            currentType = 'search';
+            currentKeyword = keyword;
+            isDetailView = false;
+            currentPage = 1;
+            document.querySelectorAll('.nav-tabs button').forEach(btn => btn.classList.remove('active'));
+            fetchData();
+        });
+
+        // Enter key untuk search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        // Pagination
+        document.getElementById('prev-page').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchData();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                fetchData();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        // ================================================================
+        //  8. JALANKAN PERTAMA KALI
+        // ================================================================
+        fetchData();
+    </script>
+</body>
+</html>
