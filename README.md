@@ -1,6 +1,6 @@
 # 📱 Capacitor Template with CI4 API Integration
 
-Template siap pakai untuk aplikasi mobile berbasis Capacitor + CodeIgniter 4 API. Dilengkapi dengan semua fitur dasar aplikasi berita (list, headline, kategori, search, detail) dan struktur keamanan yang rapi.
+Template siap pakai untuk aplikasi mobile berbasis Capacitor + CodeIgniter 4 API. Dilengkapi dengan struktur kode modular (API, UI, Main terpisah) dan semua fitur dasar aplikasi berita (list, headline, kategori, search, detail) serta keamanan API Key yang rapi.
 
 ---
 
@@ -8,6 +8,7 @@ Template siap pakai untuk aplikasi mobile berbasis Capacitor + CodeIgniter 4 API
 
 - Capacitor 6 + Android Platform
 - CI4 REST API Integration (Banten88 endpoint sebagai contoh)
+- Struktur Modular - Pemisahan API, UI, dan Main logic
 - All News - Tampilkan semua berita
 - Headline - Berita utama
 - Pilihan - Berita pilihan editor
@@ -16,7 +17,7 @@ Template siap pakai untuk aplikasi mobile berbasis Capacitor + CodeIgniter 4 API
 - Search - Pencarian berita
 - Detail - Halaman detail berita
 - Pagination - Navigasi halaman
-- Security - API Key terpisah di config.js (tidak ke-upload)
+- Security - API Key terpisah di api.js (tidak ke-upload)
 - Ready to clone - Tinggal ganti config, langsung jalan
 
 ---
@@ -25,9 +26,15 @@ Template siap pakai untuk aplikasi mobile berbasis Capacitor + CodeIgniter 4 API
 
 template-capacitor/
 ├── www/
-│   ├── index.html          ← Aplikasi utama
-│   ├── config-sample.js    ← Contoh konfigurasi (copy ke config.js)
-│   └── config.js           ← ❌ GAK ke-upload (isi API Key asli)
+│   ├── index.html          ← Halaman utama
+│   ├── style.css           ← Semua styling aplikasi
+│   ├── main.js             ← Logika utama aplikasi
+│   ├── api.js              ← ❌ GAK ke-upload (isi API Key asli)
+│   ├── api-sample.js       ← ✅ Contoh konfigurasi (copy ke api.js)
+│   ├── ui.js               ← Fungsi-fungsi UI (render, event)
+│   ├── favicon.png         ← Icon aplikasi
+│   ├── logo-light.png      ← Logo versi terang
+│   └── logo-dark.png       ← Logo versi gelap
 ├── capacitor.config.json   ← Konfigurasi Capacitor (appId, appName)
 ├── package.json            ← Dependencies
 ├── package-lock.json
@@ -39,19 +46,16 @@ template-capacitor/
 ## 🔧 Cara Pakai
 
 1. Clone Repository
-
 git clone https://github.com/yedincoder/template-capacitor.git nama-project-baru
 cd nama-project-baru
 
 2. Setup Konfigurasi
-
 Copy contoh konfigurasi:
-cp www/config-sample.js www/config.js
+cp www/api-sample.js www/api.js
+Edit www/api.js dengan API Key kamu:
+nano www/api.js
 
-Edit www/config.js dengan API Key kamu:
-nano www/config.js
-
-Isi www/config.js:
+Isi www/api.js:
 const APP_CONFIG = {
     baseUrl: 'https://domain-api-anda.com/api',
     apiKey: 'GANTI_DENGAN_API_KEY_ANDA',
@@ -59,21 +63,12 @@ const APP_CONFIG = {
 };
 
 3. Setup Capacitor
-
-Install dependencies:
 npm install
-
-Tambah platform Android:
 npx cap add android
-
-Sync project:
 npx cap sync
-
-Buka di Android Studio:
 npx cap open android
 
 4. Update Identitas Aplikasi
-
 Edit capacitor.config.json:
 {
   "appId": "com.namaproject.app",
@@ -86,7 +81,6 @@ Edit capacitor.config.json:
 }
 
 5. Jalankan di Android Studio
-
 Pilih device (HP fisik atau emulator)
 Klik tombol Run
 
@@ -94,9 +88,9 @@ Klik tombol Run
 
 ## 🛡️ Keamanan
 
-- www/config.js berisi API Key asli TIDAK DI-UPLOAD ke GitHub (terproteksi .gitignore)
-- www/config-sample.js adalah contoh tanpa API Key asli (boleh di-upload)
-- Pastikan kamu tidak pernah commit config.js ke repository public
+- www/api.js berisi API Key asli TIDAK DI-UPLOAD ke GitHub (terproteksi .gitignore)
+- www/api-sample.js adalah contoh tanpa API Key asli (boleh di-upload)
+- Pastikan kamu tidak pernah commit api.js ke repository public
 
 ---
 
@@ -104,60 +98,37 @@ Klik tombol Run
 
 Template ini dirancang untuk API dengan struktur seperti Banten88:
 
-Endpoint: /post/all
-Method: GET
-Parameter: page, limit
-
-Endpoint: /post/headline
-Method: GET
-Parameter: page, limit
-
-Endpoint: /post/pilihan
-Method: GET
-Parameter: page, limit
-
-Endpoint: /post/populer
-Method: GET
-Parameter: page, limit
-
-Endpoint: /post/search
-Method: GET
-Parameter: q, page, limit
-
-Endpoint: /post/category/[slug]
-Method: GET
-Parameter: page, limit
-
-Endpoint: /post/read/[slug]
-Method: GET
-Parameter: -
+Endpoint: /post/all | Method: GET | Parameter: page, limit
+Endpoint: /post/headline | Method: GET | Parameter: page, limit
+Endpoint: /post/pilihan | Method: GET | Parameter: page, limit
+Endpoint: /post/populer | Method: GET | Parameter: page, limit
+Endpoint: /post/search | Method: GET | Parameter: q, page, limit
+Endpoint: /post/category/[slug] | Method: GET | Parameter: page, limit
+Endpoint: /post/read/[slug] | Method: GET | Parameter: -
+Endpoint: /api/menu | Method: GET | Parameter: page, limit
+Endpoint: /api/menu/[header or footer or lainnya]  | Method: GET | Parameter: page, limit
+Endpoint: /api/pages/[slug] | Method: GET | Parameter: page, limit
+Endpoint: /api/foto/ | Method: GET | Parameter: page, limit
+Endpoint: /api/foto/[slug] | Method: GET | Parameter: page, limit
+Endpoint: /api/video/ | Method: GET | Parameter: page, limit
+Endpoint: /api/foto/[slug] | Method: GET | Parameter: page, limit
 
 ---
 
 ## 🔄 Update Template
 
 Kalo ada perubahan di template, pull di project yang sudah ada:
-
 cd nama-project-baru
 git pull origin main
-
-Hati-hati dengan konflik, backup dulu config.js
+Hati-hati dengan konflik, backup dulu api.js
 
 ---
 
 ## 📝 Customization
 
-Ganti Tema/Warna:
-Edit www/index.html bagian style
-
-.app-header {
-    background: #1a237e; /* Ganti warna biru */
-}
-
-Tambahkan Kategori Baru:
-Di www/index.html, tambahkan button di #navTabs:
-
-<button data-type="category" data-slug="teknologi">💻 Teknologi</button>
+Ganti Tema/Warna: Edit www/style.css
+Tambahkan Kategori Baru: Di www/index.html, tambahkan button di #navTabs
+Ubah Logo: Ganti file logo-light.png dan logo-dark.png di folder www/
 
 ---
 
